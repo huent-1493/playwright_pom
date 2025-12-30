@@ -5,15 +5,25 @@ export default defineConfig({
   timeout: 30000,
   use: {
     // Configure artifacts to be recorded only when a test fails
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    screenshot: "only-on-failure",
+    video: "retain-on-failure",
     /// Support trace for debugging
-    trace: 'on-first-retry',
+    trace: "on-first-retry",
+    storageState: "auth.json",
   },
   projects: [
     {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts$/,  // ✅ Nhận diện .setup.ts files
+      use: { ...devices['Desktop Chrome'] }
+    },
+    {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "playwright/.auth/user.json", // Sử dụng auth state
+      },
+      dependencies: ["setup"], // Chạy setup trước
     },
 
     {
