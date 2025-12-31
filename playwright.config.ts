@@ -1,8 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  testDir: "./tests",
-  timeout: 30000,
+  testDir: './tests', // thư mục chứa test
+  timeout: 30 * 1000, // timeout mỗi test = 30s
+  retries: 0, // số lần chạy lại test fail (có thể đổi thành 1)
   use: {
     // Configure artifacts to be recorded only when a test fails
     screenshot: 'only-on-failure',
@@ -11,9 +12,21 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   projects: [
+     // Setup project để chạy .setup.ts files
     {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      name: 'setup',
+      testMatch: /.*\.setup\.ts$/,  // ✅ Nhận diện .setup.ts files
+      use: { ...devices['Desktop Chrome'] }
+    },
+
+    // Main test projects
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/user.json'  // Sử dụng auth state
+      },
+      dependencies: ['setup'],  // Chạy setup trước
     },
 
     {
@@ -53,6 +66,12 @@ export default defineConfig({
     //   name: 'Google Chrome',
     //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     // },
+  ],
+
+  reporter: [
+    ['list'], // reporter chính trên terminal
+    ['html', { outputFolder: 'playwright-report', open: 'never' }], // không tự mở
+    ['json', { outputFile: 'report.json' }], // lưu kết quả json
   ],
 
   /* Run your local dev server before starting the tests */
