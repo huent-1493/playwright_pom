@@ -11,9 +11,21 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   projects: [
+     // Setup project để chạy .setup.ts files
     {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      name: 'setup',
+      testMatch: /.*\.setup\.ts$/,  // ✅ Nhận diện .setup.ts files
+      use: { ...devices['Desktop Chrome'] }
+    },
+
+    // Main test projects
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/user.json'  // Sử dụng auth state
+      },
+      dependencies: ['setup'],  // Chạy setup trước
     },
 
     {
