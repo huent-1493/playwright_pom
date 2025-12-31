@@ -46,8 +46,7 @@ test.describe("Login tests using POM + hooks", () => {
       .locator(".inventory_item_name")
       .first()
       .textContent();
-      //// Failed test case
-    expect(firstProductName).toBe("Sauce Labs Backpacks");
+    expect(firstProductName).toBe("Sauce Labs Backpack");
   });
 });
 
